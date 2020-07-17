@@ -9,26 +9,7 @@ const { response } = require('express');
 const fetch = require('node-fetch');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-// exports.signup = (req, res) => {
-//   const { name, email, password } = req.body;
-//   User.findOne({ email: email }).exec((error, user) => {
-//     if (user) {
-//       return res.status(400).json({ error: 'Email is already taken' });
-//     }
-//   });
-//   let newUser = new User({ name, email, password });
-//   newUser.save((err, success) => {
-//     if (err) {
-//       return res.status(400).json({
-//         error: err,
-//       });
-//     }
-//     res.status(200).json({
-//       message: 'SignUp success, please signin',
-//     });
-//   });
-// };
-
+// @User Signup to send activation link to email
 exports.signup = (req, res) => {
   const { name, email, password } = req.body;
   User.findOne({ email: email }).exec((error, user) => {
@@ -321,7 +302,7 @@ exports.facebookLogin = (req, res) => {
   console.log('FACEBOOK LOGIN REQ BODY', req.body);
   const { userID, accessToken } = req.body;
 
-  const url = `https://graph.facebook.com/v2.11/${userID}/?fields=id,name,email&access_token=${accessToken}`;
+  const url = `https://graph.facebook.com/v2.11/${userID}/?fields=id,name,first_name,last_name,email,picture&access_token=${accessToken}`;
 
   return (
     fetch(url, {
@@ -330,6 +311,7 @@ exports.facebookLogin = (req, res) => {
       .then((response) => response.json())
       // .then(response => console.log(response))
       .then((response) => {
+        console.log(response);
         const { email, name } = response;
         User.findOne({ email }).exec((err, user) => {
           if (user) {

@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
 const hpp = require('hpp');
 const xss = require('xss-clean');
@@ -12,15 +13,14 @@ const mongoSanitize = require('express-mongo-sanitize');
 const logger = require('./config/logger');
 const { PORT } = require('./config/index');
 require('dotenv').config();
-
 const app = express();
-
-//connect to database
-require('./database/dbConnection');
 
 //import routes
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/user');
+
+//Database connection
+require('./database/dbConnection');
 
 // application middlewares
 app.use(useragent.express());
@@ -28,7 +28,7 @@ app.use(bodyParser.json());
 app.use(
   bodyParser.urlencoded({
     extended: true,
-    limit: '10kb',
+    limit: '50mb',
   })
 );
 app.use(lusca.xframe('SAMEORIGIN'));
@@ -41,6 +41,8 @@ app.enable('trust proxy', true);
 //Storing server logs logs
 app.use(morgan('dev'));
 app.use(morgan('combined', { stream: logger.stream }));
+
+app.use(cookieParser());
 
 //extra protection to handle requests from CSRF and any attacks
 app.use(helmet());

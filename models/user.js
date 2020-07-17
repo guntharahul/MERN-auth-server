@@ -16,6 +16,13 @@ const userSchema = new mongoose.Schema(
       unique: true,
       lowercase: true,
     },
+    about: {
+      type: String,
+    },
+    photo: {
+      data: Buffer,
+      contentType: String,
+    },
     hashed_password: {
       type: String,
       required: true,
