@@ -16,12 +16,29 @@ const userSchema = new mongoose.Schema(
       unique: true,
       lowercase: true,
     },
-    about: {
+    policyprovider: {
       type: String,
+      required: true,
     },
-    photo: {
-      data: Buffer,
-      contentType: String,
+    policynumber: {
+      type: String,
+      required: true,
+    },
+    age: {
+      type: Number,
+      required: true,
+    },
+    bmi: {
+      type: String,
+      required: true,
+    },
+    disease: {
+      type: String,
+      required: true,
+    },
+    gender: {
+      type: String,
+      required: true,
     },
     hashed_password: {
       type: String,

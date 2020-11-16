@@ -5,25 +5,45 @@ const expressJWT = require('express-jwt');
 const _ = require('loadsh');
 const user = require('../models/user');
 const { OAuth2Client } = require('google-auth-library');
-const { response } = require('express');
 const fetch = require('node-fetch');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 // @User Signup to send activation link to email
 exports.signup = (req, res) => {
-  const { name, email, password } = req.body;
+  const {
+    name,
+    email,
+    password,
+    policyprovider,
+    policynumber,
+    age,
+    bmi,
+    disease,
+    gender,
+  } = req.body;
   User.findOne({ email: email }).exec((error, user) => {
     if (user) {
       return res.status(400).json({ error: 'User with email already exists' });
     }
     //creating a signed token
     const token = jwt.sign(
-      { name, email, password },
+      {
+        name,
+        email,
+        password,
+        policynumber,
+        policyprovider,
+        age,
+        bmi,
+        disease,
+        gender,
+      },
       process.env.JWT_ACCOUNT_ACTIVATION,
       {
         expiresIn: '10m',
       }
     );
+
     const emailData = {
       from: process.env.EMAIL_FROM,
       to: email,
@@ -67,9 +87,29 @@ exports.accountActivation = (req, res) => {
         });
       }
 
-      const { name, email, password } = jwt.decode(token);
+      const {
+        name,
+        email,
+        password,
+        policyprovider,
+        policynumber,
+        age,
+        bmi,
+        disease,
+        gender,
+      } = jwt.decode(token);
 
-      const user = new User({ name, email, password });
+      const user = new User({
+        name,
+        email,
+        password,
+        policynumber,
+        policyprovider,
+        age,
+        bmi,
+        disease,
+        gender,
+      });
 
       user.save((err, user) => {
         if (err) {
